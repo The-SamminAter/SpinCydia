@@ -1,9 +1,9 @@
 Package: com.the-samminater.spincydia
 Name: SpinCydia
 Depends: mobilesubstrate
-Version: 0.1
+Version: 0.0.1
 Architecture: iphoneos-arm
-Description: Dynamically rotating icons for Cydia
+Description: A dynamically rotating icon for Cydia
 Maintainer: The-SamminAter
 Author: Josh Doctors
 Section: Tweaks
