@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 #import <substrate.h>
 
-#define kBundlePath @"/Library/PreferenceBundles/SpinSettingsSettings.bundle"
+#define kBundlePath @"/Library/PreferenceBundles/SpinCydiaSettings.bundle"
 #define SYS_VER_GREAT_OR_EQUAL(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:64] != NSOrderedAscending)
 
 static NSString * SSSpeed = @"2.0";
@@ -36,7 +36,7 @@ static BOOL enableTweak = NO;
 @implementation SBLiveIconImageView
 @end
 
-@interface SBSettingsIconImageView : SBLiveIconImageView
+@interface SBCydiaIconImageView : SBLiveIconImageView
 -(id)initWithFrame:(CGRect)frame;
 - (UIImageView*)dcImage;
 - (void)setDcImage:(UIImageView*)value;
@@ -57,7 +57,8 @@ static BOOL enableTweak = NO;
 -(BOOL)isUILocked;
 @end
 
-%subclass SBSettingsIconImageView : SBLiveIconImageView
+%subclass SBCydiaIconImageView : SBLiveIconImageView
+//changed from `SBSettingsIconImageView` to what it currently is
 
 %new - (UIImageView*)dcImage
 {
@@ -112,7 +113,7 @@ static BOOL enableTweak = NO;
 
 	if (orig != nil)
 	{
-		NSLog(@"Attaching the Core image to our settings icon");
+		NSLog(@"Attaching the Core image to our Cydia icon");
 		NSBundle *bundle = [[[NSBundle alloc] initWithPath:kBundlePath] autorelease];
 		NSString *imagePath = [bundle pathForResource:@"Core" ofType:@"png"];
 		UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
@@ -129,7 +130,7 @@ static BOOL enableTweak = NO;
 
 -(void)dealloc
 {
-	NSLog(@"SpinSettings deallocated");
+	NSLog(@"SpinCydia deallocated");
 	self.isSpinning = 0;
 	self.hasAdjusted = 0;
 	[self.dcImage release];
@@ -170,11 +171,11 @@ static BOOL enableTweak = NO;
 }
 %end
 
-%subclass SBSettingsApplicationIcon : SBApplicationIcon
+%subclass SBCydiaApplicationIcon : SBApplicationIcon
 
 -(Class)iconImageViewClassForLocation:(int)arg1
 {
-	return %c(SBSettingsIconImageView);
+	return %c(SBCydiaIconImageView);
 }
 
 %end
@@ -196,10 +197,10 @@ static BOOL enableTweak = NO;
 	Class orig = %orig;
 	NSString * identifier = MSHookIvar<NSString*>(self,"_bundleIdentifier");
 
-	if([identifier isEqualToString:@"com.apple.Preferences"]){
-		return %c(SBSettingsApplicationIcon);
+	if([identifier isEqualToString:@"com.saurik.Cydia"]){
+		return %c(SBCydiaApplicationIcon);
 		//If we just return orig here in order to disable the tweak, we would have to respring for any changes to be applied.
-		//Thus hiding the view through functions in the SBSettingsIconImageView class is an alternative that does not require a respring.
+		//Thus hiding the view through functions in the SBCydiaIconImageView class is an alternative that does not require a respring.
 	}
 	else
 		return orig;
@@ -213,12 +214,12 @@ static BOOL enableTweak = NO;
 {
 	%orig;
 
-	if ([[icon leafIdentifier] isEqualToString:@"com.apple.Preferences"])
+	if ([[icon leafIdentifier] isEqualToString:@"com.saurik.Cydia"])
 	{
-		NSLog(@"_setIcon for Preferences");
-		SBSettingsIconImageView * img = MSHookIvar<SBSettingsIconImageView*>(self,"_iconImageView");
+		NSLog(@"_setIcon for Cydia");
+		SBCydiaIconImageView * img = MSHookIvar<SBCydiaIconImageView*>(self,"_iconImageView");
 
-		if([img isKindOfClass:%c(SBSettingsIconImageView)])
+		if([img isKindOfClass:%c(SBCydiaIconImageView)])
 		{
 			NSLog(@"Our image ivar is of the correct class.");
 			[img setDynamicFrame:[img bounds]];
@@ -230,17 +231,17 @@ static BOOL enableTweak = NO;
 
 static void loadPrefs() 
 {
-	NSLog(@"Loading SpinSettings prefs");
-    CFPreferencesAppSynchronize(CFSTR("com.joshdoctors.spinsettings"));
+	NSLog(@"Loading SpinCydia prefs");
+    CFPreferencesAppSynchronize(CFSTR("com.the-samminater.spincydia"));
 
-    enableTweak = !CFPreferencesCopyAppValue(CFSTR("enableTweak"), CFSTR("com.joshdoctors.spinsettings")) ? NO : [(id)CFPreferencesCopyAppValue(CFSTR("enableTweak"), CFSTR("com.joshdoctors.spinsettings")) boolValue];
+    enableTweak = !CFPreferencesCopyAppValue(CFSTR("enableTweak"), CFSTR("com.the-samminater.spincydia")) ? NO : [(id)CFPreferencesCopyAppValue(CFSTR("enableTweak"), CFSTR("com.the-samminater.spincydia")) boolValue];
     if (enableTweak) {
-        NSLog(@"[SpinSettings] We are enabled");
+        NSLog(@"[SpinCydia] We are enabled");
     } else {
-        NSLog(@"[SpinSettings] We are NOT enabled");
+        NSLog(@"[SpinCydia] We are NOT enabled");
     }
 
-    SSSpeed = (NSString*)CFPreferencesCopyAppValue(CFSTR("SSSpeed"), CFSTR("com.joshdoctors.spinsettings")) ?: @"2.0";
+    SSSpeed = (NSString*)CFPreferencesCopyAppValue(CFSTR("SSSpeed"), CFSTR("com.the-samminater.spincydia")) ?: @"2.0";
     [SSSpeed retain];
     NSLog(@"SSSpeed: %@",SSSpeed);
 
@@ -248,11 +249,11 @@ static void loadPrefs()
 
 %ctor
 {
-	NSLog(@"Loading SpinSettings");
+	NSLog(@"Loading SpinCydia");
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
                                 NULL,
                                 (CFNotificationCallback)loadPrefs,
-                                CFSTR("com.joshdoctors.spinsettings/settingschanged"),
+                                CFSTR("com.the-samminater.spincydia/settingschanged"),
                                 NULL,
                                 CFNotificationSuspensionBehaviorDeliverImmediately);
 	loadPrefs();

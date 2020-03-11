@@ -1,0 +1,10 @@
+{
+	entry = {
+		bundle = SpinCydiaSettings;
+		cell = PSLinkCell;
+		detail = "SpinCydiaSettingsListController";
+		icon = "SpinCydiaSettings.png";
+		isController = 1;
+		label = SpinCydia;
+	};
+}
