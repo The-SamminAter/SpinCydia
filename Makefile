@@ -1,13 +1,14 @@
+include $(THEOS)/makefiles/common.mk
+
 ARCHS = armv7 arm64 arm64e
-include theos/makefiles/common.mk
-
+export GO_EASY_ON_ME=1
 TWEAK_NAME = SpinCydia
-SpinSettings_FILES = Tweak.xm
-SpinSettings_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore
-SpinSettings_CFLAGS = -Wno-error
-export GO_EASY_ON_ME := 1
-include $(THEOS_MAKE_PATH)/tweak.mk
 
+$(TWEAK_NAME)_FILES = Tweak.xm
+$(TWEAK_NAME)_CFLAGS = -Wno-error
+$(TWEAK_NAME)_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore
+
+include $(THEOS_MAKE_PATH)/tweak.mk
 SUBPROJECTS += SpinCydiaSettings
 include $(THEOS_MAKE_PATH)/aggregate.mk
 
