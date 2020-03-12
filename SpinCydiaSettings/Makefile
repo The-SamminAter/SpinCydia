@@ -6,7 +6,6 @@ SpinSettingsSettings_FILES = SpinCydiaSettings.mm
 SpinSettingsSettings_INSTALL_PATH = /Library/PreferenceBundles
 SpinSettingsSettings_FRAMEWORKS = UIKit
 SpinSettingsSettings_PRIVATE_FRAMEWORKS = Preferences
-SpinSettingsSettings_CFLAGS = -Wno-error
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 
